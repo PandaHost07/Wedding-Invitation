@@ -550,8 +550,11 @@
 
 	<!-- Background Music -->
 	<audio id="bgMusic" loop style="display:none;" crossorigin="anonymous" preload="auto">
-		<source src="https://cdn.pixabay.com/download/audio/2022/03/10/audio_d73996cc3b.mp3" type="audio/mpeg">
 		<source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
+		<source
+			src="https://commondatastorage.googleapis.com/codeskulptor-demos/riceracer_assets/music/background-acid-piano.m4a"
+			type="audio/mp4">
+		<source src="https://assets.mixkit.co/active_storage/sfx/2871/2871-preview.mp3" type="audio/mpeg">
 		Musik tidak didukung pada browser Anda.
 	</audio>
 
@@ -646,7 +649,7 @@
 			showToast('✓ Terima kasih! Konfirmasi Anda diterima', 'success', 4000);
 		});
 
-		// Music Control - Improved Version
+		// Music Control - Improved Version dengan better debugging
 		var bgMusic = document.getElementById("bgMusic");
 		var musicToggle = document.getElementById("musicToggle");
 		var isMusicPlaying = false;
@@ -655,6 +658,7 @@
 		bgMusic.volume = 0.3;
 
 		console.log("🎵 Music player initialized");
+		console.log("Audio sources available:", bgMusic.querySelectorAll('source').length);
 
 		// Function to update button state
 		function updateMusicButtonState() {
@@ -662,22 +666,44 @@
 				musicToggle.innerHTML = "<i class=\"icon-mute\"></i>";
 				musicToggle.style.background = "linear-gradient(135deg, #999, #777)";
 				isMusicPlaying = false;
+				console.log("🔴 Button state: MUTED");
 			} else {
 				musicToggle.innerHTML = "<i class=\"icon-volume\"></i>";
 				musicToggle.style.background = "linear-gradient(135deg, #e85d75, #d94670)";
 				isMusicPlaying = true;
+				console.log("🟢 Button state: PLAYING");
 			}
 		}
 
 		// Handle audio load error
 		bgMusic.addEventListener("error", function () {
-			console.error("❌ Audio load error:", bgMusic.error);
-			showToast("❌ Musik tidak bisa dimuat", "error", 3000);
+			console.error("❌ Audio load error - Code:", bgMusic.error.code);
+			console.error("❌ Error message:", bgMusic.error.message);
+
+			// Try next source
+			var sources = bgMusic.querySelectorAll('source');
+			var currentSrc = bgMusic.currentSrc;
+			console.log("❌ Failed to load:", currentSrc);
+			console.log("📋 Trying next source...");
+
+			showToast("❌ Musik gagal, mencoba sumber lain...", "error", 2000);
 		});
 
 		// Handle audio load success
 		bgMusic.addEventListener("canplay", function () {
-			console.log("✅ Audio ready to play");
+			console.log("✅ Audio ready to play!");
+			console.log("📊 Current source:", bgMusic.currentSrc);
+			console.log("📊 Duration:", bgMusic.duration, "seconds");
+		});
+
+		// Handle audio load started
+		bgMusic.addEventListener("loadstart", function () {
+			console.log("📥 Loading audio...");
+		});
+
+		// Handle audio can play through
+		bgMusic.addEventListener("canplaythrough", function () {
+			console.log("✅✅ Audio fully loaded and ready!");
 		});
 
 		// Handle audio ended
@@ -687,7 +713,8 @@
 
 		// Handle playback start
 		bgMusic.addEventListener("play", function () {
-			console.log("▶️ Audio started playing");
+			console.log("▶️ Audio started playing!");
+			console.log("📊 Current time:", bgMusic.currentTime);
 			updateMusicButtonState();
 		});
 
@@ -697,22 +724,35 @@
 			updateMusicButtonState();
 		});
 
+		// Monitor loading progress
+		bgMusic.addEventListener("progress", function () {
+			if (bgMusic.buffered.length > 0) {
+				var bufferedEnd = bgMusic.buffered.end(bgMusic.buffered.length - 1);
+				var duration = bgMusic.duration;
+				if (duration > 0) {
+					var percentBuffered = (bufferedEnd / duration) * 100;
+					console.log("📥 Buffered:", Math.round(percentBuffered) + "%");
+				}
+			}
+		});
+
 		// Initialize music on first user interaction
 		document.addEventListener("click", function initializeAudio() {
 			if (!musicInitialized) {
 				musicInitialized = true;
-				console.log("👆 First click - initializing audio");
+				console.log("👆 First interaction detected - attempting auto-play");
 
-				// Try to play
+				bgMusic.load();
+
 				var playPromise = bgMusic.play();
 
 				if (playPromise !== undefined) {
 					playPromise.then(function () {
-						console.log("✅ Auto-play started");
+						console.log("✅✅ Auto-play started successfully!");
 						updateMusicButtonState();
 					}).catch(function (error) {
-						console.log("ℹ️ Auto-play not allowed:", error.message);
-						// This is expected - user must click button to play
+						console.log("ℹ️ Auto-play not allowed (expected):", error.name);
+						console.log("ℹ️ User must click music button to play");
 					});
 				}
 			}
@@ -723,20 +763,39 @@
 			e.preventDefault();
 			e.stopPropagation();
 
-			console.log("🔘 Toggle clicked - current state:", bgMusic.paused ? "paused" : "playing");
+			console.log("🔘 Music button clicked!");
+			console.log("📊 Audio paused state:", bgMusic.paused);
+			console.log("📊 Current source:", bgMusic.currentSrc);
 
 			if (bgMusic.paused) {
 				// Start music
-				console.log("▶️ Starting music...");
+				console.log("▶️ Attempting to play music...");
+
+				// Ensure audio is loaded
+				if (!bgMusic.currentSrc) {
+					bgMusic.load();
+					console.log("📥 Loading audio first...");
+				}
+
 				var playPromise = bgMusic.play();
 
 				if (playPromise !== undefined) {
 					playPromise.then(function () {
-						console.log("✅ Music started successfully");
+						console.log("✅ Music playing!");
 						updateMusicButtonState();
+						showToast("🎵 Musik diputar", "success", 2000);
 					}).catch(function (error) {
-						console.error("❌ Failed to play:", error.message);
-						showToast("❌ Musik tidak bisa diputar", "error", 2000);
+						console.error("❌ Play failed:", error.name);
+						console.error("❌ Error message:", error.message);
+
+						// More detailed error messages
+						if (error.name === "NotAllowedError") {
+							showToast("❌ Browser tidak allow autoplay tanpa interaksi", "error", 3000);
+						} else if (error.name === "NotSupportedError") {
+							showToast("❌ Format audio tidak didukung", "error", 3000);
+						} else {
+							showToast("❌ Musik tidak bisa diputar: " + error.name, "error", 3000);
+						}
 						updateMusicButtonState();
 					});
 				}
@@ -745,6 +804,7 @@
 				console.log("⏹️ Pausing music...");
 				bgMusic.pause();
 				updateMusicButtonState();
+				showToast("⏸️ Musik dijeda", "success", 2000);
 				console.log("✅ Music paused");
 			}
 		});
