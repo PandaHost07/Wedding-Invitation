@@ -549,9 +549,10 @@
 	</div>
 
 	<!-- Background Music -->
-	<audio id="bgMusic" loop style="display:none;" crossorigin="anonymous">
+	<audio id="bgMusic" loop style="display:none;" crossorigin="anonymous" preload="auto">
 		<source src="https://cdn.pixabay.com/download/audio/2022/03/10/audio_d73996cc3b.mp3" type="audio/mpeg">
 		<source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
+		Musik tidak didukung pada browser Anda.
 	</audio>
 
 	<!-- Music Control Button -->
@@ -645,16 +646,28 @@
 			showToast('✓ Terima kasih! Konfirmasi Anda diterima', 'success', 4000);
 		});
 
-		// Music Control Enhanced dengan Error Handling
+		// Music Control - Improved Version
 		var bgMusic = document.getElementById("bgMusic");
 		var musicToggle = document.getElementById("musicToggle");
 		var isMusicPlaying = false;
+		var musicInitialized = false;
 
 		bgMusic.volume = 0.3;
 
 		console.log("🎵 Music player initialized");
-		console.log("Audio element:", bgMusic);
-		console.log("Audio sources:", bgMusic.querySelectorAll('source'));
+
+		// Function to update button state
+		function updateMusicButtonState() {
+			if (bgMusic.paused) {
+				musicToggle.innerHTML = "<i class=\"icon-mute\"></i>";
+				musicToggle.style.background = "linear-gradient(135deg, #999, #777)";
+				isMusicPlaying = false;
+			} else {
+				musicToggle.innerHTML = "<i class=\"icon-volume\"></i>";
+				musicToggle.style.background = "linear-gradient(135deg, #e85d75, #d94670)";
+				isMusicPlaying = true;
+			}
+		}
 
 		// Handle audio load error
 		bgMusic.addEventListener("error", function () {
@@ -675,67 +688,64 @@
 		// Handle playback start
 		bgMusic.addEventListener("play", function () {
 			console.log("▶️ Audio started playing");
-			isMusicPlaying = true;
-			musicToggle.innerHTML = "<i class=\"icon-volume\"></i>";
-			musicToggle.style.background = "linear-gradient(135deg, #e85d75, #d94670)";
+			updateMusicButtonState();
 		});
 
 		// Handle pause
 		bgMusic.addEventListener("pause", function () {
 			console.log("⏸️ Audio paused");
-			isMusicPlaying = false;
-			musicToggle.innerHTML = "<i class=\"icon-mute\"></i>";
-			musicToggle.style.background = "linear-gradient(135deg, #999, #777)";
+			updateMusicButtonState();
 		});
 
-		// Handle loadstart
-		bgMusic.addEventListener("loadstart", function () {
-			console.log("📥 Loading audio...");
-		});
+		// Initialize music on first user interaction
+		document.addEventListener("click", function initializeAudio() {
+			if (!musicInitialized) {
+				musicInitialized = true;
+				console.log("👆 First click - initializing audio");
 
-		// Try to play on page load
-		window.addEventListener("load", function () {
-			console.log("📄 Page loaded - attempting initial audio setup");
-			bgMusic.play().catch(err => {
-				console.log("ℹ️ Initial autoplay blocked (expected):", err.message);
-			});
-		});
+				// Try to play
+				var playPromise = bgMusic.play();
 
-		// Enable audio on first user interaction
-		document.addEventListener("click", function enableAudio(event) {
-			if (bgMusic.paused) {
-				console.log("👆 First click detected - enabling audio");
-				bgMusic.play().then(() => {
-					console.log("✅ Audio started on user interaction");
-				}).catch(err => {
-					console.error("❌ Failed to play audio on first click:", err);
-					showToast("❌ Musik tidak bisa diputar: " + err.message, "error", 3000);
-				});
+				if (playPromise !== undefined) {
+					playPromise.then(function () {
+						console.log("✅ Auto-play started");
+						updateMusicButtonState();
+					}).catch(function (error) {
+						console.log("ℹ️ Auto-play not allowed:", error.message);
+						// This is expected - user must click button to play
+					});
+				}
 			}
-		}, { once: false });
+		}, { once: true });
 
 		// Music toggle button click handler
 		musicToggle.addEventListener("click", function (e) {
 			e.preventDefault();
 			e.stopPropagation();
 
-			console.log("🔘 Toggle button clicked - Current state:", isMusicPlaying ? "playing" : "stopped");
+			console.log("🔘 Toggle clicked - current state:", bgMusic.paused ? "paused" : "playing");
 
 			if (bgMusic.paused) {
 				// Start music
-				console.log("▶️ Attempting to start music...");
-				bgMusic.play().then(() => {
-					console.log("✅ Music playing successfully");
-				}).catch(err => {
-					console.error("❌ Failed to play music:", err);
-					showToast("❌ Musik tidak bisa diputar: " + err.message, "error", 3000);
-				});
+				console.log("▶️ Starting music...");
+				var playPromise = bgMusic.play();
+
+				if (playPromise !== undefined) {
+					playPromise.then(function () {
+						console.log("✅ Music started successfully");
+						updateMusicButtonState();
+					}).catch(function (error) {
+						console.error("❌ Failed to play:", error.message);
+						showToast("❌ Musik tidak bisa diputar", "error", 2000);
+						updateMusicButtonState();
+					});
+				}
 			} else {
-				// Stop music
-				console.log("⏹️ Stopping music...");
+				// Pause music
+				console.log("⏹️ Pausing music...");
 				bgMusic.pause();
-				bgMusic.currentTime = 0;
-				console.log("✅ Music stopped");
+				updateMusicButtonState();
+				console.log("✅ Music paused");
 			}
 		});
 	</script>
