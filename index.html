@@ -548,12 +548,12 @@
 		<a href="#" class="js-gotop"><i class="icon-arrow-up"></i></a>
 	</div>
 
-	<!-- Background Music -->
-	<audio id="bgMusic" loop style="display:none;" crossorigin="anonymous" preload="auto">
-		<source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
-		<source src="https://assets.mixkit.co/active_storage/music/27857/27857-preview.mp3" type="audio/mpeg">
-		<source src="https://assets.mixkit.co/active_storage/music/36888/36888-preview.mp3" type="audio/mpeg">
-		<source src="https://assets.mixkit.co/active_storage/music/37569/37569-preview.mp3" type="audio/mpeg">
+	<!-- Background Music - Local & Remote Fallback -->
+	<audio id="bgMusic" loop style="display:none;" crossorigin="use-credentials" preload="auto">
+		<source src="music/wedding-music.mp3" type="audio/mpeg">
+		<source src="https://file-examples.com/storage/fe6e43ea92b6ba2cbc6267e/2017-11-21/file_example_MP3_700KB.mp3"
+			type="audio/mpeg">
+		<source src="https://www.hochmuth.com/uploads/media/Haydn_Cello_Concerto_D-1.mp3" type="audio/mpeg">
 		Musik tidak didukung pada browser Anda.
 	</audio>
 
@@ -648,16 +648,23 @@
 			showToast('✓ Terima kasih! Konfirmasi Anda diterima', 'success', 4000);
 		});
 
-		// Music Control - Improved Version dengan better debugging
+		// Music Control - Improved with CORS & Timeout Handling
 		var bgMusic = document.getElementById("bgMusic");
 		var musicToggle = document.getElementById("musicToggle");
 		var isMusicPlaying = false;
 		var musicInitialized = false;
+		var musicLoadTimeout;
 
 		bgMusic.volume = 0.3;
 
 		console.log("🎵 Music player initialized");
-		console.log("Audio sources available:", bgMusic.querySelectorAll('source').length);
+		console.log("🎵 Sources available:", bgMusic.querySelectorAll('source').length);
+
+		// List all sources for debugging
+		var sources = bgMusic.querySelectorAll('source');
+		sources.forEach(function (src, index) {
+			console.log("  Source " + (index + 1) + ":", src.src);
+		});
 
 		// Function to update button state
 		function updateMusicButtonState() {
@@ -674,35 +681,60 @@
 			}
 		}
 
-		// Handle audio load error
-		bgMusic.addEventListener("error", function () {
-			console.error("❌ Audio load error - Code:", bgMusic.error.code);
-			console.error("❌ Error message:", bgMusic.error.message);
+		// Handle audio source selection
+		bgMusic.addEventListener("loadstart", function () {
+			console.log("📥 Loading audio...");
+			console.log("📋 Trying source:", bgMusic.currentSrc || "selecting first source...");
 
-			// Try next source
-			var sources = bgMusic.querySelectorAll('source');
-			var currentSrc = bgMusic.currentSrc;
-			console.log("❌ Failed to load:", currentSrc);
-			console.log("📋 Trying next source...");
-
-			showToast("❌ Musik gagal, mencoba sumber lain...", "error", 2000);
+			// Set timeout for source loading
+			clearTimeout(musicLoadTimeout);
+			musicLoadTimeout = setTimeout(function () {
+				console.warn("⏱️ Source load timeout - trying next source");
+				bgMusic.load();
+			}, 10000);
 		});
 
-		// Handle audio load success
+		// Handle audio load error
+		bgMusic.addEventListener("error", function () {
+			clearTimeout(musicLoadTimeout);
+			var errorCode = bgMusic.error ? bgMusic.error.code : 'unknown';
+			var errorMessage = '';
+
+			switch (errorCode) {
+				case 1:
+					errorMessage = 'ABORTED';
+					break;
+				case 2:
+					errorMessage = 'NETWORK - Masalah koneksi jaringan';
+					break;
+				case 3:
+					errorMessage = 'DECODE - File tidak bisa di-decode';
+					break;
+				case 4:
+					errorMessage = 'NOT SUPPORTED - Format tidak didukung';
+					break;
+				default:
+					errorMessage = 'Unknown error';
+			}
+
+			console.error("❌ Audio error code:", errorCode, "(" + errorMessage + ")");
+			console.error("❌ Current source:", bgMusic.currentSrc);
+			console.log("📋 Browser akan automatic try source berikutnya...");
+
+			showToast("❌ " + errorMessage + " - mencoba sumber lain...", "error", 2000);
+		});
+
+		// Handle audio can play
 		bgMusic.addEventListener("canplay", function () {
+			clearTimeout(musicLoadTimeout);
 			console.log("✅ Audio ready to play!");
 			console.log("📊 Current source:", bgMusic.currentSrc);
 			console.log("📊 Duration:", bgMusic.duration, "seconds");
 		});
 
-		// Handle audio load started
-		bgMusic.addEventListener("loadstart", function () {
-			console.log("📥 Loading audio...");
-		});
-
-		// Handle audio can play through
+		// Handle audio fully loaded
 		bgMusic.addEventListener("canplaythrough", function () {
-			console.log("✅✅ Audio fully loaded and ready!");
+			console.log("✅✅ Audio fully buffered and ready!");
 		});
 
 		// Handle audio ended
@@ -739,21 +771,11 @@
 		document.addEventListener("click", function initializeAudio() {
 			if (!musicInitialized) {
 				musicInitialized = true;
-				console.log("👆 First interaction detected - attempting auto-play");
+				console.log("👆 First interaction detected - attempting to prepare audio");
 
+				// Just load, don't autoplay (browser policy)
 				bgMusic.load();
-
-				var playPromise = bgMusic.play();
-
-				if (playPromise !== undefined) {
-					playPromise.then(function () {
-						console.log("✅✅ Auto-play started successfully!");
-						updateMusicButtonState();
-					}).catch(function (error) {
-						console.log("ℹ️ Auto-play not allowed (expected):", error.name);
-						console.log("ℹ️ User must click music button to play");
-					});
-				}
+				console.log("📥 Audio loading on first user interaction...");
 			}
 		}, { once: true });
 
@@ -765,35 +787,40 @@
 			console.log("🔘 Music button clicked!");
 			console.log("📊 Audio paused state:", bgMusic.paused);
 			console.log("📊 Current source:", bgMusic.currentSrc);
+			console.log("📊 Audio readyState:", bgMusic.readyState + " (0=未初始化, 1=metadata, 2=current data, 3=future data, 4=enough data)");
 
 			if (bgMusic.paused) {
 				// Start music
 				console.log("▶️ Attempting to play music...");
 
 				// Ensure audio is loaded
-				if (!bgMusic.currentSrc) {
+				if (bgMusic.readyState === 0) {
+					console.log("📥 Audio not loaded yet - loading first...");
 					bgMusic.load();
-					console.log("📥 Loading audio first...");
 				}
 
 				var playPromise = bgMusic.play();
 
 				if (playPromise !== undefined) {
 					playPromise.then(function () {
-						console.log("✅ Music playing!");
+						console.log("✅ Music playing successfully!");
 						updateMusicButtonState();
 						showToast("🎵 Musik diputar", "success", 2000);
 					}).catch(function (error) {
 						console.error("❌ Play failed:", error.name);
 						console.error("❌ Error message:", error.message);
+						console.error("❌ Audio readyState:", bgMusic.readyState);
+						console.error("❌ Audio networkState:", bgMusic.networkState);
 
-						// More detailed error messages
+						// Detailed error messages
 						if (error.name === "NotAllowedError") {
-							showToast("❌ Browser tidak allow autoplay tanpa interaksi", "error", 3000);
+							showToast("❌ Klik lagi atau refresh halaman", "error", 3000);
 						} else if (error.name === "NotSupportedError") {
-							showToast("❌ Format audio tidak didukung", "error", 3000);
+							showToast("❌ Format audio tidak didukung browser", "error", 3000);
+						} else if (error.name === "AbortError") {
+							showToast("❌ Audio loading dibatalkan - coba lagi", "error", 3000);
 						} else {
-							showToast("❌ Musik tidak bisa diputar: " + error.name, "error", 3000);
+							showToast("❌ Error: " + error.name, "error", 3000);
 						}
 						updateMusicButtonState();
 					});
