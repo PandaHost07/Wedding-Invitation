@@ -1,9 +1,5 @@
 <!DOCTYPE html>
-<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
-<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
-<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
-<!--[if gt IE 8]><!-->
-<html class="no-js"> <!--<![endif]-->
+<html class="no-js">
 
 <head>
 	<meta charset="utf-8">
@@ -12,43 +8,60 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<meta name="description" content="Undangan Pernikahan Ridho & Mia - 09 Agustus 2026 di Bandar Lampung" />
 	<meta name="keywords" content="pernikahan, undangan, wedding, Ridho, Mia, 2026, Bandar Lampung" />
-	<meta name="author" content="Ridho & Mia" />
-
-	<!-- Facebook and Twitter integration -->
-	<meta property="og:title" content="Pernikahan Ridho & Mia" />
-	<meta property="og:description" content="Undangan Pernikahan Ridho & Mia - 09 Agustus 2026" />
-	<meta property="og:type" content="website" />
 
 	<link href='https://fonts.googleapis.com/css?family=Work+Sans:400,300,600,400italic,700' rel='stylesheet'
 		type='text/css'>
 	<link href="https://fonts.googleapis.com/css?family=Sacramento" rel="stylesheet">
 
-	<!-- Animate.css -->
 	<link rel="stylesheet" href="css/animate.css">
-	<!-- Icomoon Icon Fonts-->
 	<link rel="stylesheet" href="css/icomoon.css">
-	<!-- Bootstrap  -->
 	<link rel="stylesheet" href="css/bootstrap.css">
-
-	<!-- Magnific Popup -->
 	<link rel="stylesheet" href="css/magnific-popup.css">
-
-	<!-- Owl Carousel  -->
 	<link rel="stylesheet" href="css/owl.carousel.min.css">
 	<link rel="stylesheet" href="css/owl.theme.default.min.css">
-
-	<!-- Theme style  -->
 	<link rel="stylesheet" href="css/style.css">
 
-	<!-- Modernizr JS -->
 	<script src="js/modernizr-2.6.2.min.js"></script>
-	<!-- FOR IE9 below -->
-	<!--[if lt IE 9]>
-	<script src="js/respond.min.js"></script>
-	<![endif]-->
 
-	<!-- Toast Notification CSS -->
 	<style>
+		/* Smooth scroll */
+		html {
+			scroll-behavior: smooth;
+		}
+
+		/* Music Button Enhanced */
+		#musicToggle {
+			border-radius: 50% !important;
+			width: 65px !important;
+			height: 65px !important;
+			padding: 0 !important;
+			display: flex !important;
+			align-items: center !important;
+			justify-content: center !important;
+			font-size: 28px !important;
+			transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+			box-shadow: 0 4px 15px rgba(232, 93, 117, 0.4);
+			background: linear-gradient(135deg, #e85d75, #d94670) !important;
+			border: none !important;
+			color: white !important;
+			cursor: pointer;
+		}
+
+		#musicToggle:hover {
+			transform: scale(1.15) rotate(5deg);
+			box-shadow: 0 8px 25px rgba(232, 93, 117, 0.6);
+		}
+
+		#musicToggle:active {
+			transform: scale(0.95);
+		}
+
+		#musicToggle i {
+			transition: transform 0.4s ease;
+			display: inline-block;
+		}
+
+		/* Toast Notification */
 		.toast-notification {
 			position: fixed;
 			top: 20px;
@@ -65,11 +78,11 @@
 		}
 
 		.toast-notification.success {
-			background: #4CAF50;
+			background: linear-gradient(135deg, #4CAF50, #45a049);
 		}
 
 		.toast-notification.error {
-			background: #f44336;
+			background: linear-gradient(135deg, #f44336, #da190b);
 		}
 
 		@keyframes slideInRight {
@@ -100,9 +113,163 @@
 			animation: slideOutRight 0.4s ease-in forwards;
 		}
 
-		/* Smooth scroll behavior */
-		html {
-			scroll-behavior: smooth;
+		/* Scroll Down Hint */
+		.scroll-hint {
+			position: absolute;
+			bottom: 40px;
+			left: 50%;
+			transform: translateX(-50%);
+			text-align: center;
+			z-index: 10;
+			animation: fadeInUp 1.2s ease-out 0.5s both;
+		}
+
+		.scroll-hint p {
+			color: rgba(255, 255, 255, 0.8);
+			font-size: 13px;
+			margin: 0;
+			letter-spacing: 1px;
+			font-weight: 300;
+		}
+
+		.scroll-hint i {
+			display: block;
+			margin-top: 12px;
+			font-size: 24px;
+			animation: bounce 2s infinite;
+			color: rgba(255, 255, 255, 0.9);
+		}
+
+		@keyframes bounce {
+
+			0%,
+			100% {
+				transform: translateY(0);
+			}
+
+			50% {
+				transform: translateY(-12px);
+			}
+		}
+
+		@keyframes fadeInUp {
+			from {
+				opacity: 0;
+				transform: translateY(20px);
+			}
+
+			to {
+				opacity: 1;
+				transform: translateY(0);
+			}
+		}
+
+		/* Parallax Background */
+		.fh5co-cover {
+			background-attachment: fixed !important;
+			background-size: cover !important;
+			background-position: center !important;
+		}
+
+		/* Enhanced Fade-in Animation */
+		.animate-box {
+			opacity: 0;
+			animation: fadeInScale 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+		}
+
+		.animate-box:nth-child(1) {
+			animation-delay: 0.1s;
+		}
+
+		.animate-box:nth-child(2) {
+			animation-delay: 0.2s;
+		}
+
+		.animate-box:nth-child(3) {
+			animation-delay: 0.3s;
+		}
+
+		@keyframes fadeInScale {
+			from {
+				opacity: 0;
+				transform: scale(0.9) translateY(20px);
+			}
+
+			to {
+				opacity: 1;
+				transform: scale(1) translateY(0);
+			}
+		}
+
+		/* Countdown Animation */
+		.simply-countdown {
+			animation: countdownPulse 2.5s ease-in-out infinite;
+		}
+
+		@keyframes countdownPulse {
+
+			0%,
+			100% {
+				transform: scale(1);
+			}
+
+			50% {
+				transform: scale(1.05);
+			}
+		}
+
+		.simply-countdown>span {
+			transition: all 0.3s ease;
+		}
+
+		.simply-countdown>span.show-animate {
+			animation: digitBounce 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+		}
+
+		@keyframes digitBounce {
+			0% {
+				transform: scale(0.5) rotateX(90deg);
+				opacity: 0;
+			}
+
+			50% {
+				transform: scale(1.1);
+			}
+
+			100% {
+				transform: scale(1) rotateX(0deg);
+				opacity: 1;
+			}
+		}
+
+		/* Typed Text Animation */
+		.typed-text {
+			position: relative;
+			display: inline-block;
+		}
+
+		.typed-text::after {
+			content: '';
+			position: absolute;
+			right: -5px;
+			top: 0;
+			width: 2px;
+			height: 100%;
+			background: #e85d75;
+			animation: blink 0.7s infinite;
+		}
+
+		@keyframes blink {
+
+			0%,
+			49% {
+				opacity: 1;
+			}
+
+			50%,
+			100% {
+				opacity: 0;
+			}
 		}
 	</style>
 
@@ -129,7 +296,6 @@
 						</ul>
 					</div>
 				</div>
-
 			</div>
 		</nav>
 
@@ -148,6 +314,10 @@
 							</div>
 						</div>
 					</div>
+				</div>
+				<div class="scroll-hint">
+					<p class="typed-text">Scroll Down untuk Detail Acara</p>
+					<i class="icon-arrow-down"></i>
 				</div>
 			</div>
 		</header>
@@ -187,7 +357,8 @@
 			</div>
 		</div>
 
-		<div id="fh5co-event" class="fh5co-bg" style="background-image:url(images/img_bg_3.jpg);">
+		<div id="fh5co-event" class="fh5co-bg"
+			style="background-image:url(images/img_bg_3.jpg); background-attachment: fixed;">
 			<div class="overlay"></div>
 			<div class="container">
 				<div class="row">
@@ -300,7 +471,6 @@
 
 		<div id="fh5co-services" class="fh5co-section-gray">
 			<div class="container">
-
 				<div class="row animate-box">
 					<div class="col-md-8 col-md-offset-2 text-center fh5co-heading">
 						<h2>Informasi Penting</h2>
@@ -364,15 +534,13 @@
 					</div>
 
 					<div class="col-md-6 animate-box">
-						<div class="fh5co-video fh5co-bg" style="background-image: url(images/img_bg_3.jpg); ">
+						<div class="fh5co-video fh5co-bg" style="background-image: url(images/img_bg_3.jpg);">
 							<a href="https://goo.gl/maps/example" class="popup-vimeo" target="_blank"><i
 									class="icon-location"></i></a>
 							<div class="overlay"></div>
 						</div>
 					</div>
 				</div>
-
-
 			</div>
 		</div>
 
@@ -388,7 +556,7 @@
 				</div>
 				<div class="row animate-box">
 					<div class="col-md-10 col-md-offset-1">
-						<form class="form-inline">
+						<form class="form-inline" id="rsvpForm">
 							<div class="col-md-4 col-sm-4">
 								<div class="form-group">
 									<label for="name" class="sr-only">Nama</label>
@@ -413,7 +581,6 @@
 
 		<footer id="fh5co-footer" role="contentinfo">
 			<div class="container">
-
 				<div class="row copyright">
 					<div class="col-md-12 text-center">
 						<p>
@@ -429,7 +596,6 @@
 						</p>
 					</div>
 				</div>
-
 			</div>
 		</footer>
 	</div>
@@ -438,49 +604,36 @@
 		<a href="#" class="js-gotop"><i class="icon-arrow-up"></i></a>
 	</div>
 
-	<!-- Background Music - Musik Tradisional Indonesia (Gamelan) -->
-	<audio id="bgMusic" autoplay loop style="display:none;">
+	<!-- Background Music -->
+	<audio id="bgMusic" loop style="display:none;">
 		<source src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_d73998bfc.mp3" type="audio/mpeg">
-		Musik tradisional Indonesia
 	</audio>
 
 	<!-- Music Control Button -->
 	<div style="position: fixed; bottom: 100px; right: 20px; z-index: 999;">
-		<button id="musicToggle" class="btn btn-sm btn-default"
-			style="border-radius: 50%; width: 50px; height: 50px; padding: 0; display: flex; align-items: center; justify-content: center;">
+		<button id="musicToggle" class="btn btn-sm btn-default" title="Toggle Music">
 			<i class="icon-volume-high"></i>
 		</button>
 	</div>
 
 	<!-- jQuery -->
 	<script src="js/jquery.min.js"></script>
-	<!-- jQuery Easing -->
 	<script src="js/jquery.easing.1.3.js"></script>
-	<!-- Bootstrap -->
 	<script src="js/bootstrap.min.js"></script>
-	<!-- Waypoints -->
 	<script src="js/jquery.waypoints.min.js"></script>
-	<!-- Carousel -->
 	<script src="js/owl.carousel.min.js"></script>
-	<!-- countTo -->
 	<script src="js/jquery.countTo.js"></script>
-
-	<!-- Stellar -->
 	<script src="js/jquery.stellar.min.js"></script>
-	<!-- Magnific Popup -->
 	<script src="js/jquery.magnific-popup.min.js"></script>
 	<script src="js/magnific-popup-options.js"></script>
-
-	<!-- Countdown -->
 	<script src="js/simplyCountdown.js"></script>
-	<!-- Main -->
 	<script src="js/main.js"></script>
 
 	<script>
-		// Tanggal pernikahan: 09 Agustus 2026 pukul 08:00
+		// Wedding Date
 		var weddingDate = new Date(2026, 7, 9, 8, 0, 0);
 
-		// Countdown untuk akad nikah
+		// Countdown
 		simplyCountdown('.simply-countdown-one', {
 			year: weddingDate.getFullYear(),
 			month: weddingDate.getMonth() + 1,
@@ -488,13 +641,18 @@
 			enableUtc: false
 		});
 
-		//jQuery example
-		$('#simply-countdown-losange').simplyCountdown({
-			year: weddingDate.getFullYear(),
-			month: weddingDate.getMonth() + 1,
-			day: weddingDate.getDate(),
-			enableUtc: false
-		});
+		// Enhanced countdown animation
+		setInterval(function () {
+			var elements = document.querySelectorAll('.simply-countdown > span');
+			elements.forEach(function (el) {
+				if (!el.classList.contains('show-animate')) {
+					el.classList.add('show-animate');
+					setTimeout(function () {
+						el.classList.remove('show-animate');
+					}, 600);
+				}
+			});
+		}, 1000);
 
 		// Smooth Scroll Navigation
 		document.querySelectorAll('a[href^="#"]').forEach(anchor => {
@@ -510,7 +668,7 @@
 			});
 		});
 
-		// Toast Notification Function
+		// Toast Notification
 		function showToast(message, type = 'success', duration = 3000) {
 			const toast = document.createElement('div');
 			toast.className = `toast-notification ${type}`;
@@ -525,53 +683,70 @@
 			}, duration);
 		}
 
-		// Form RSVP Submit Handler
-		document.querySelector('form.form-inline').addEventListener('submit', function (e) {
+		// Form RSVP Handler
+		document.getElementById('rsvpForm').addEventListener('submit', function (e) {
 			e.preventDefault();
 
 			const nameInput = document.getElementById('name').value;
 			const emailInput = document.getElementById('email').value;
 
-			// Validasi
 			if (!nameInput.trim() || !emailInput.trim()) {
 				showToast('Mohon isi semua field terlebih dahulu', 'error', 3000);
 				return;
 			}
 
-			// Reset form
 			this.reset();
-
-			// Show success notification
 			showToast('✓ Terima kasih! Konfirmasi Anda diterima', 'success', 4000);
-
-			// Bisa di-integrate dengan backend nantinya
-			// Untuk sekarang hanya local notification
 		});
 
-		// Background Music Control
+		// Music Control Enhanced
 		var bgMusic = document.getElementById('bgMusic');
 		var musicToggle = document.getElementById('musicToggle');
-		var isMusicPlaying = true;
+		var isMusicPlaying = false;
 
-		// Try to play music on page load
-		bgMusic.volume = 0.3; // Set volume to 30%
-		bgMusic.play().catch(function (error) {
-			isMusicPlaying = false;
-			musicToggle.innerHTML = '<i class="icon-volume-mute"></i>';
+		// Auto play dengan user interaction
+		document.addEventListener('click', function initMusic() {
+			if (!isMusicPlaying) {
+				bgMusic.volume = 0.3;
+				bgMusic.play().then(() => {
+					isMusicPlaying = true;
+					musicToggle.innerHTML = '<i class="icon-volume-high"></i>';
+				}).catch(err => {
+					console.log('Autoplay prevented:', err);
+				});
+				document.removeEventListener('click', initMusic);
+			}
 		});
 
-		// Music toggle button
-		musicToggle.addEventListener('click', function () {
+		// Music Toggle Button
+		musicToggle.addEventListener('click', function (e) {
+			e.stopPropagation();
+
 			if (isMusicPlaying) {
 				bgMusic.pause();
 				musicToggle.innerHTML = '<i class="icon-volume-mute"></i>';
+				musicToggle.style.animation = 'none';
+				setTimeout(() => {
+					musicToggle.style.animation = '';
+				}, 10);
 				isMusicPlaying = false;
 			} else {
 				bgMusic.play();
 				musicToggle.innerHTML = '<i class="icon-volume-high"></i>';
+				musicToggle.style.animation = 'pulse 0.5s ease';
 				isMusicPlaying = true;
 			}
 		});
+
+		// Pulse animation for music button
+		const style = document.createElement('style');
+		style.textContent = `
+			@keyframes pulse {
+				0%, 100% { transform: scale(1); }
+				50% { transform: scale(1.1); }
+			}
+		`;
+		document.head.appendChild(style);
 	</script>
 
 </body>
