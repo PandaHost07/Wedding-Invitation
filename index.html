@@ -113,52 +113,7 @@
 			animation: slideOutRight 0.4s ease-in forwards;
 		}
 
-		/* Scroll Down Hint */
-		.scroll-hint {
-			position: absolute;
-			bottom: 40px;
-			left: 50%;
-			transform: translateX(-50%);
-			text-align: center;
-			z-index: 10;
-			animation: fadeInUp 1.2s ease-out 0.5s both;
-		}
-
-		.scroll-hint p {
-			color: rgba(255, 255, 255, 0.8);
-			font-size: 13px;
-			margin: 0;
-			letter-spacing: 1px;
-			font-weight: 300;
-		}
-
-		.scroll-hint i {
-			display: block;
-			margin-top: 12px;
-			font-size: 24px;
-			animation: bounce 2s infinite;
-			color: rgba(255, 255, 255, 0.9);
-		}
-
-		@keyframes bounce {
-
-			0%,
-			100% {
-				transform: translateY(0);
-			}
-
-			50% {
-				transform: translateY(-12px);
-			}
-		}
-
-		@keyframes fadeInUp {
-			from {
-				opacity: 0;
-				transform: translateY(20px);
-			}
-
-			to {
+		to {
 				opacity: 1;
 				transform: translateY(0);
 			}
@@ -315,12 +270,7 @@
 						</div>
 					</div>
 				</div>
-				<div class="scroll-hint">
-					<p class="typed-text">Scroll Down untuk Detail Acara</p>
-					<i class="icon-arrow-down"></i>
-				</div>
-			</div>
-		</header>
+				</header>
 
 		<div id="fh5co-couple">
 			<div class="container">
@@ -752,3 +702,4 @@
 </body>
 
 </html>
+
