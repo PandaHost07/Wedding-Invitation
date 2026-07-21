@@ -113,12 +113,6 @@
 			animation: slideOutRight 0.4s ease-in forwards;
 		}
 
-		to {
-				opacity: 1;
-				transform: translateY(0);
-			}
-		}
-
 		/* Parallax Background */
 		.fh5co-cover {
 			background-attachment: fixed !important;
@@ -270,7 +264,7 @@
 						</div>
 					</div>
 				</div>
-				</header>
+		</header>
 
 		<div id="fh5co-couple">
 			<div class="container">
@@ -555,14 +549,16 @@
 	</div>
 
 	<!-- Background Music -->
-	<audio id="bgMusic" loop style="display:none;">
-		<source src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_d73998bfc.mp3" type="audio/mpeg">
+	<audio id="bgMusic" loop style="display:none;" crossorigin="anonymous">
+		<source src="https://cdn.pixabay.com/download/audio/2022/03/10/audio_d73996cc3b.mp3" type="audio/mpeg">
+		<source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
 	</audio>
 
 	<!-- Music Control Button -->
 	<div style="position: fixed; bottom: 100px; right: 20px; z-index: 999;">
-		<button id="musicToggle" class="btn btn-sm btn-default" title="Toggle Music">
-			<i class="icon-volume-high"></i>
+		<button id="musicToggle" class="btn btn-sm btn-default" title="Toggle Music"
+			style="border-radius: 50%; width: 65px; height: 65px; padding: 0; display: flex; align-items: center; justify-content: center; font-size: 28px; background: linear-gradient(135deg, #e85d75, #d94670); border: none; color: white; box-shadow: 0 4px 15px rgba(232, 93, 117, 0.4); cursor: pointer; transition: all 0.3s ease;">
+			<i class="icon-volume"></i>
 		</button>
 	</div>
 
@@ -649,59 +645,101 @@
 			showToast('✓ Terima kasih! Konfirmasi Anda diterima', 'success', 4000);
 		});
 
-		// Music Control Enhanced
-		var bgMusic = document.getElementById('bgMusic');
-		var musicToggle = document.getElementById('musicToggle');
+		// Music Control Enhanced dengan Error Handling
+		var bgMusic = document.getElementById("bgMusic");
+		var musicToggle = document.getElementById("musicToggle");
 		var isMusicPlaying = false;
 
-		// Auto play dengan user interaction
-		document.addEventListener('click', function initMusic() {
-			if (!isMusicPlaying) {
-				bgMusic.volume = 0.3;
-				bgMusic.play().then(() => {
-					isMusicPlaying = true;
-					musicToggle.innerHTML = '<i class="icon-volume-high"></i>';
-				}).catch(err => {
-					console.log('Autoplay prevented:', err);
-				});
-				document.removeEventListener('click', initMusic);
-			}
+		bgMusic.volume = 0.3;
+
+		console.log("🎵 Music player initialized");
+		console.log("Audio element:", bgMusic);
+		console.log("Audio sources:", bgMusic.querySelectorAll('source'));
+
+		// Handle audio load error
+		bgMusic.addEventListener("error", function () {
+			console.error("❌ Audio load error:", bgMusic.error);
+			showToast("❌ Musik tidak bisa dimuat", "error", 3000);
 		});
 
-		// Music Toggle Button
-		musicToggle.addEventListener('click', function (e) {
+		// Handle audio load success
+		bgMusic.addEventListener("canplay", function () {
+			console.log("✅ Audio ready to play");
+		});
+
+		// Handle audio ended
+		bgMusic.addEventListener("ended", function () {
+			console.log("🔄 Audio ended, looping...");
+		});
+
+		// Handle playback start
+		bgMusic.addEventListener("play", function () {
+			console.log("▶️ Audio started playing");
+			isMusicPlaying = true;
+			musicToggle.innerHTML = "<i class=\"icon-volume\"></i>";
+			musicToggle.style.background = "linear-gradient(135deg, #e85d75, #d94670)";
+		});
+
+		// Handle pause
+		bgMusic.addEventListener("pause", function () {
+			console.log("⏸️ Audio paused");
+			isMusicPlaying = false;
+			musicToggle.innerHTML = "<i class=\"icon-mute\"></i>";
+			musicToggle.style.background = "linear-gradient(135deg, #999, #777)";
+		});
+
+		// Handle loadstart
+		bgMusic.addEventListener("loadstart", function () {
+			console.log("📥 Loading audio...");
+		});
+
+		// Try to play on page load
+		window.addEventListener("load", function () {
+			console.log("📄 Page loaded - attempting initial audio setup");
+			bgMusic.play().catch(err => {
+				console.log("ℹ️ Initial autoplay blocked (expected):", err.message);
+			});
+		});
+
+		// Enable audio on first user interaction
+		document.addEventListener("click", function enableAudio(event) {
+			if (bgMusic.paused) {
+				console.log("👆 First click detected - enabling audio");
+				bgMusic.play().then(() => {
+					console.log("✅ Audio started on user interaction");
+				}).catch(err => {
+					console.error("❌ Failed to play audio on first click:", err);
+					showToast("❌ Musik tidak bisa diputar: " + err.message, "error", 3000);
+				});
+			}
+		}, { once: false });
+
+		// Music toggle button click handler
+		musicToggle.addEventListener("click", function (e) {
+			e.preventDefault();
 			e.stopPropagation();
 
-			if (isMusicPlaying) {
-				bgMusic.pause();
-				musicToggle.innerHTML = '<i class="icon-volume-mute"></i>';
-				musicToggle.style.animation = 'none';
-				setTimeout(() => {
-					musicToggle.style.animation = '';
-				}, 10);
-				isMusicPlaying = false;
+			console.log("🔘 Toggle button clicked - Current state:", isMusicPlaying ? "playing" : "stopped");
+
+			if (bgMusic.paused) {
+				// Start music
+				console.log("▶️ Attempting to start music...");
+				bgMusic.play().then(() => {
+					console.log("✅ Music playing successfully");
+				}).catch(err => {
+					console.error("❌ Failed to play music:", err);
+					showToast("❌ Musik tidak bisa diputar: " + err.message, "error", 3000);
+				});
 			} else {
-				bgMusic.play();
-				musicToggle.innerHTML = '<i class="icon-volume-high"></i>';
-				musicToggle.style.animation = 'pulse 0.5s ease';
-				isMusicPlaying = true;
+				// Stop music
+				console.log("⏹️ Stopping music...");
+				bgMusic.pause();
+				bgMusic.currentTime = 0;
+				console.log("✅ Music stopped");
 			}
 		});
-
-		// Pulse animation for music button
-		const style = document.createElement('style');
-		style.textContent = `
-			@keyframes pulse {
-				0%, 100% { transform: scale(1); }
-				50% { transform: scale(1.1); }
-			}
-		`;
-		document.head.appendChild(style);
 	</script>
 
 </body>
 
 </html>
-
-
-
